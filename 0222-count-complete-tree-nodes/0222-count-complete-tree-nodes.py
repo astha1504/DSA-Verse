@@ -6,7 +6,7 @@ class Solution:
         q=deque([root])
         while q:
             l=len(q)
-            for _ in range(len(q)):
+            for _ in range(l):
                 node=q.popleft()
                 count+=1
                 if node.left:
