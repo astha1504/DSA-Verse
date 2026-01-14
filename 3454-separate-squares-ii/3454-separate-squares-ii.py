@@ -1,5 +1,4 @@
 from typing import List
-from collections import defaultdict
 
 class Solution:
     def separateSquares(self, squares: List[List[int]]) -> float:
@@ -24,26 +23,30 @@ class Solution:
                     e = max(e, b)
             return total + (e - s)
 
-        active = defaultdict(int)
-        prev_y = events[0][0]
+        active = []          # store active intervals explicitly
         strips = []
         total_area = 0
 
+        prev_y = events[0][0]
         i = 0
+
         while i < len(events):
             y = events[i][0]
             dy = y - prev_y
 
-            intervals = [iv for iv, c in active.items() if c > 0]
-            if dy > 0 and intervals:
-                w = union_length(intervals)
+            if dy > 0 and active:
+                w = union_length(active)
                 area = w * dy
                 strips.append((prev_y, dy, w))
                 total_area += area
 
+            # process all events at this y
             while i < len(events) and events[i][0] == y:
-                _, t, x1, x2 = events[i]
-                active[(x1, x2)] += t
+                _, typ, x1, x2 = events[i]
+                if typ == 1:
+                    active.append((x1, x2))
+                else:
+                    active.remove((x1, x2))
                 i += 1
 
             prev_y = y
@@ -52,8 +55,9 @@ class Solution:
         acc = 0
 
         for y, h, w in strips:
-            if acc + w * h >= half:
+            area = w * h
+            if acc + area >= half:
                 return y + (half - acc) / w
-            acc += w * h
+            acc += area
 
         return prev_y
