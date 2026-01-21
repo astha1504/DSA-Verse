@@ -1,0 +1,18 @@
+from typing import List
+
+class Solution:
+    def minBitwiseArray(self, nums: List[int]) -> List[int]:
+        ans = []
+        for p in nums:
+            if p == 2:
+                ans.append(-1)
+            else:
+                # count trailing 1s
+                t = 0
+                x = p
+                while x & 1:
+                    t += 1
+                    x >>= 1
+                
+                ans.append(p - (1 << (t - 1)))
+        return ans
