@@ -1,52 +1,40 @@
-from typing import List
-import heapq
-
 class Solution:
     def minimumCost(self, nums: List[int], k: int, dist: int) -> int:
-        n = len(nums)
-        base = nums[0]          # first subarray always starts at 0
-        need = k - 1            # remaining starts to choose
-        
-        small = []              # max heap (negative values)
-        large = []              # min heap
-        small_sum = 0
-        ans = float('inf')
+        def l2r():
+            nonlocal s
+            x = l.pop()
+            s -= x
+            r.add(x)
 
-        # helper functions
-        def add(x):
-            nonlocal small_sum
-            if len(small) < need:
-                heapq.heappush(small, -x)
-                small_sum += x
+        def r2l():
+            nonlocal s
+            x = r.pop(0)
+            l.add(x)
+            s += x
+
+        k -= 1
+        s = sum(nums[: dist + 2])
+        l = SortedList(nums[1 : dist + 2])
+        r = SortedList()
+        while len(l) > k:
+            l2r()
+        ans = s
+        for i in range(dist + 2, len(nums)):
+            x = nums[i - dist - 1]
+            if x in l:
+                l.remove(x)
+                s -= x
             else:
-                if small and x < -small[0]:
-                    small_sum += x + heapq.heappop(small)
-                    heapq.heappush(small, -x)
-                else:
-                    heapq.heappush(large, x)
-
-        def remove(x):
-            nonlocal small_sum
-            if small and x <= -small[0]:
-                small_sum -= x
-                small.remove(-x)
-                heapq.heapify(small)
-                if large:
-                    y = heapq.heappop(large)
-                    heapq.heappush(small, -y)
-                    small_sum += y
+                r.remove(x)
+            y = nums[i]
+            if y < l[-1]:
+                l.add(y)
+                s += y
             else:
-                large.remove(x)
-                heapq.heapify(large)
-
-        # sliding window
-        for i in range(1, n):
-            add(nums[i])
-
-            if i > dist:
-                remove(nums[i - dist])
-
-            if len(small) == need:
-                ans = min(ans, base + small_sum)
-
+                r.add(y)
+            while len(l) < k:
+                r2l()
+            while len(l) > k:
+                l2r()
+            ans = min(ans, s)
         return ans
