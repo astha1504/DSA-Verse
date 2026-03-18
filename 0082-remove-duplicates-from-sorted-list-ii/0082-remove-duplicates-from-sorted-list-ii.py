@@ -10,8 +10,9 @@ class Solution:
         y=head
         while y!=None and y.next!=None:
             if(y.val==y.next.val):
-                while (y!=None and y.val==y.next.val):
-                    y=y.next
+                while y and y.next and y.val == y.next.val:
+                    y = y.next
+
                 x.next=y.next
             else:
                 x=x.next
