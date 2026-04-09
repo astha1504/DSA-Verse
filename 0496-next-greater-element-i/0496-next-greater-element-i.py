@@ -1,17 +1,17 @@
 class Solution:
     def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
-        s=[]
-        nextgreater={}
-        for num in nums2:
-            while s and s[-1] < num:
-                nextgreater[s.pop()] = num
-            s.append(num)      
-        for num in s:
-            nextgreater[num]=-1
-        ans=[]    
-        for num in nums1:
-            ans.append(nextgreater[num])
-        return ans
-
-
-
+        m={}
+        st=[]
+        
+        for i in range(len(nums2)-1,-1,-1):
+            while st and nums2[i]>=st[-1]:
+                st.pop()
+            
+            if not st:
+                m[nums2[i]]=-1
+            else:
+                m[nums2[i]]=st[-1]
+            
+            st.append(nums2[i])
+        
+        return [m[x] for x in nums1]
