@@ -1,12 +1,16 @@
 class Solution:
     def isValid(self, s: str) -> bool:
-        st = []
-        mp = {')':'(',']':'[','}':'{'} 
+        st=[]
+        n=len(s)
         for ch in s:
-            if ch in "([{":
+            if ch == '(' or ch == '{' or ch == '[':
                 st.append(ch)
             else:
-                if not st or st[-1]!=mp[ch]:
+                if not st:
                     return False
-                st.pop()
-        return not st
+                else:
+                    top=st.pop()
+                    if (ch == ')' and top != '(') or (ch == '}' and top != '{') or(ch == ']' and top != '['):
+                        return False
+
+        return len(st)==0
